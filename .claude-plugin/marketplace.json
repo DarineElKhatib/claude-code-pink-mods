@@ -1,0 +1,8 @@
+{
+  "name": "claude-code-pink-mods",
+  "owner": { "name": "DarineElKhatib" },
+  "plugins": [
+    { "name": "pink-and-cute", "source": "./pink-and-cute" },
+    { "name": "burn-meter-pink", "source": "./burn-meter-pink" }
+  ]
+}

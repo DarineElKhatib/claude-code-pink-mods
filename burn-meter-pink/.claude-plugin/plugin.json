@@ -1,0 +1,15 @@
+{
+  "name": "burn-meter-pink",
+  "version": "0.1.0",
+  "description": "A pink recolour of OneWave AI's burn-meter: live session cost odometer above the prompt, with a burning fuse, real-world comparisons and threshold alerts",
+  "types": "./types/index.d.ts",
+  "license": "MIT",
+  "author": {
+    "name": "OneWave AI (original burn-meter); pink recolour by DarineElKhatib",
+    "url": "https://github.com/OneWave-AI/claude-code-mods"
+  },
+  "homepage": "https://github.com/DarineElKhatib/claude-code-pink-mods/tree/main/burn-meter-pink",
+  "repository": "https://github.com/DarineElKhatib/claude-code-pink-mods",
+  "displayName": "Burn Meter Pink",
+  "icon": "./.claude-plugin/icon.png"
+}

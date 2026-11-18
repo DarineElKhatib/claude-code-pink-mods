@@ -1,0 +1,29 @@
+{
+  "name": "Pink and cute",
+  "base": "dark",
+  "overrides": {
+    "claude": "#ff8fc7",
+    "claudeShimmer": "#ffc2e0",
+    "text": "#fbe6ef",
+    "inactive": "#bf9aab",
+    "inactiveShimmer": "#e3c3d1",
+    "subtle": "#6b4a5a",
+    "suggestion": "#f7a8d8",
+    "permission": "#f78fb3",
+    "permissionShimmer": "#ffc2d6",
+    "remember": "#d7a6f5",
+    "promptBorder": "#ff8fc7",
+    "promptBorderShimmer": "#ffc2e0",
+    "bashBorder": "#ff5fa2",
+    "planMode": "#c9a0f5",
+    "autoAccept": "#f0a6e8",
+    "ide": "#f7a8d8",
+    "userMessageBackground": "#3b2530",
+    "userMessageBackgroundHover": "#4a2f3c",
+    "selectionBg": "#6b3a55",
+    "briefLabelYou": "#ffb3d9",
+    "briefLabelClaude": "#ff8fc7",
+    "rate_limit_fill": "#ff8fc7",
+    "rate_limit_empty": "#4a2f3c"
+  }
+}
