@@ -4,7 +4,7 @@ Two plugins that make Claude Code pink.
 
 | Plugin | What it does |
 | --- | --- |
-| `pink-and-cute` | A pink look for the desktop and mobile apps. In the terminal: a "Pink and cute" colour theme to pick in `/theme`, cute spinner words, and a pink row above the prompt. |
+| `pink-and-cute` | A pink look for the desktop and mobile apps. In the terminal: a "Pink and cute" colour theme to pick in `/theme`, cute spinner words, and a pink row above the prompt. Everywhere: a sticker on each tool call (🎀 edits, 🔍 searches, a sad face on a failure) and a mood line under the prompt that follows what Claude is doing. |
 | `burn-meter-pink` | A pink recolour of [burn-meter](https://github.com/OneWave-AI/claude-code-mods/tree/main/burn-meter) by OneWave AI: the session cost meter with its fire in pinks, turning red near the limit. |
 
 ## Install
