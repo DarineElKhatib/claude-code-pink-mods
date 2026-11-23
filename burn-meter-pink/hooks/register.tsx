@@ -1,8 +1,8 @@
 import { atom, read, update } from 'claude-code'
-import type { EngineInterface, Register } from 'claude-code'
+import type { ElementTable, EngineInterface, Register } from 'claude-code'
 
 import type { Burn, ModelTally } from '../types'
-import { FIRE_ROWS, THINGS, barText, compare, crossed, fireCells, heat, lifetimeDelta, modelsLine, money, pct, resetsIn, tallyTurn, tween, windows } from './burn'
+import { FIRE_ROWS, THINGS, barColors, compare, crossed, fireCells, heat, lifetimeDelta, modelsLine, money, pct, resetsIn, tallyTurn, tween, windows } from './burn'
 
 const burn = atom({ plugin: 'burn-meter-pink', key: 'burn' } as const, {
   shown: 0,
@@ -65,6 +65,19 @@ const startPaneFire = ($: EngineInterface, columns: number) => {
     )
   })
   paneTimer = timer
+}
+
+/** The text bar, one Text per filled cell: Text has no gradient of its own. */
+const gradientBar = (Text: ElementTable['Text'], columns: number, fraction: number, hot: number) => {
+  const colors = barColors(columns, fraction, hot)
+  return (
+    <Text>
+      {colors.map((color, i) => (
+        <Text key={`cell-${i}`} color={color}>█</Text>
+      ))}
+      <Text dimColor>{'░'.repeat(Math.max(0, columns - colors.length))}</Text>
+    </Text>
+  )
 }
 
 const openPane = ($: EngineInterface) => $.ui.open({ id: PANE, title: 'Burn Meter', focus: true })
@@ -276,7 +289,7 @@ export const register: Register = on => {
         {hasFire ? (
           <Raster key="fire" columns={bar} rows={FIRE_ROWS} cells={fireCells(bar, level, level, now / 1000)} />
         ) : (
-          <Text color={color}>{barText(bar, level)}</Text>
+          gradientBar(Text, bar, level, level)
         )}
         <Box flexDirection="column">
           <Text>
@@ -307,7 +320,7 @@ export const register: Register = on => {
     const color = level > 0.75 ? RED : level > 0.45 ? ORANGE : GOLD
     const isRolling = b.shown !== b.target
     const meter = Math.max(10, Math.min(40, width - 24))
-    const windowBar = (n: number) => (n < 0 ? '' : barText(meter, Math.max(0, Math.min(1, n / 100))))
+    const windowBar = (n: number) => gradientBar(Text, meter, Math.max(0, Math.min(1, n / 100)), n / 100)
     const top = Math.max(0.01, ...history)
     const turnBar = Math.max(8, Math.min(36, width - 22))
 
@@ -327,7 +340,7 @@ export const register: Register = on => {
           {hasFire ? (
             <Raster key="bigfire" columns={width} rows={PANE_FIRE_ROWS} cells={fireCells(width, level, level, now / 1000, PANE_FIRE_ROWS)} />
           ) : (
-            <Text color={color}>{barText(width, level)}</Text>
+            gradientBar(Text, width, level, level)
           )}
         </Box>
 
@@ -337,7 +350,7 @@ export const register: Register = on => {
             {b.session >= 0 && (
               <Text>
                 <Text dimColor>{'5 hour  '}</Text>
-                <Text color={b.session > 75 ? RED : GOLD}>{windowBar(b.session)}</Text>
+                {windowBar(b.session)}
                 <Text>{` ${pct(b.session)} `}</Text>
                 <Text dimColor>{resetsIn(b.sessionResets, Date.now())}</Text>
               </Text>
@@ -345,7 +358,7 @@ export const register: Register = on => {
             {b.week >= 0 && (
               <Text>
                 <Text dimColor>{'weekly  '}</Text>
-                <Text color={b.week > 75 ? RED : GOLD}>{windowBar(b.week)}</Text>
+                {windowBar(b.week)}
                 <Text>{` ${pct(b.week)} `}</Text>
                 <Text dimColor>{resetsIn(b.weekResets, Date.now())}</Text>
               </Text>
@@ -359,7 +372,7 @@ export const register: Register = on => {
           {history.map((usd, i) => (
             <Text key={`turn-${i}`}>
               <Text dimColor>{`#${String(i + 1).padStart(2, ' ')}  `}</Text>
-              <Text color={usd === top && history.length > 1 ? ORANGE : GOLD}>{barText(turnBar, usd / top)}</Text>
+              {gradientBar(Text, turnBar, usd / top, 0)}
               <Text>{` ${money(usd)}`}</Text>
             </Text>
           ))}

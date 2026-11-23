@@ -1,6 +1,6 @@
 {
   "name": "burn-meter-pink",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A pink recolour of OneWave AI's burn-meter: live session cost odometer above the prompt, with a burning fuse, real-world comparisons and threshold alerts",
   "types": "./types/index.d.ts",
   "license": "MIT",

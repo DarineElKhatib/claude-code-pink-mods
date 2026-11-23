@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'claude-code/testing'
 
-import { FIRE_ROWS, barText, bracket, burnt, compare, crossed, fireCells, heat, lifetimeDelta, modelName, modelsLine, money, pct, resetsIn, tallyTurn, tokenCount, tween, windows } from '../hooks/burn'
+import { FIRE_ROWS, barColors, barText, bracket, burnt, compare, crossed, fireCells, heat, lifetimeDelta, modelName, modelsLine, money, pct, resetsIn, tallyTurn, tokenCount, tween, windows } from '../hooks/burn'
 
 describe('burn math', () => {
   test('money formats cents and fractions of a cent', async () => {
@@ -53,6 +53,13 @@ describe('burn math', () => {
     expect(cells.length).toBe(Math.ceil((20 * FIRE_ROWS * 12) / 3) * 4)
   })
 
+  test('the bar sweeps peach to lavender, and its far end reddens near the limit', async () => {
+    expect(barColors(10, 1, 0)).toEqual(expect.arrayContaining(['#ffb59e', '#d7a6f5']))
+    expect(new Set(barColors(10, 1, 0)).size).toBe(10)
+    expect(barColors(10, 0.5, 0).length).toBe(5)
+    expect(barColors(10, 1, 1)[9]).toBe('#e5484d')
+  })
+
   test('the bar grows with spend', async () => {
     expect(barText(10, heat(0))).toBe('█░░░░░░░░░')
     expect(barText(10, heat(99))).toBe('██████████')
@@ -93,4 +100,19 @@ describe('burn math', () => {
     expect(modelsLine(m)).toBe('opus 5.5 102k in 5k out · haiku 4.5 51k in 500 out')
     expect(tokenCount(1_200_000)).toBe('1.2M')
   })
+})
+
+test('the pane draws its text bar one colored cell at a time', async ($, on) => {
+  on('clock.now', () => ({ value: 0 }))
+  const pane = await $.ui.mount({
+    plugin: 'burn-meter-pink',
+    component: 'Pane',
+    requestId: 'burn',
+    surface: 'desktop',
+    props: { title: 'Burn Meter', isFocused: true, bodyColumns: 60, placement: 'dock', scroll: { offset: 0, bodyRows: 20 }, view: {} },
+  })
+  const cells = await pane.findAll({ type: 'Text', text: '█' })
+  // No spend yet: each bar is its one end cell, lavender.
+  expect(cells.some(c => c.props.color === '#d7a6f5')).toBe(true)
+  await pane.unmount()
 })
