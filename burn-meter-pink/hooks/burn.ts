@@ -129,8 +129,10 @@ export const lifetimeDelta = (
 // --- the fuse, as Raster cells -------------------------------------------
 
 const DEFAULT = 0x01000000
-const GOLD = 0xf7a8d8
-const ORANGE = 0xff5fa2
+// pink-and-cute's palette: its peach mascot, its pink, its lavender.
+const PEACH = 0xffb59e
+const PINK = 0xff8fc7
+const LAVENDER = 0xd7a6f5
 const RED = 0xe5484d
 const WHITE = 0xfff0f7
 
@@ -139,8 +141,17 @@ const mix = (a: number, b: number, t: number) => {
   return (ch(16) << 16) | (ch(8) << 8) | ch(0)
 }
 
-/** The flame color for a heat 0..1: gold, then orange, then red. */
-export const flame = (h: number) => (h < 0.5 ? mix(GOLD, ORANGE, h * 2) : mix(ORANGE, RED, (h - 0.5) * 2))
+/** The color `along` 0..1 of the bar's filled part: peach, pink, lavender; the far end reddens once `h` passes 0.75. */
+export const barColor = (along: number, h: number) => {
+  const sweep = along < 0.5 ? mix(PEACH, PINK, along * 2) : mix(PINK, LAVENDER, (along - 0.5) * 2)
+  return mix(sweep, RED, along * Math.max(0, Math.min(1, (h - 0.75) * 4)))
+}
+
+/** One `#rrggbb` per filled cell of a `columns`-wide bar, for surfaces that color text cell by cell. */
+export const barColors = (columns: number, fraction: number, h: number) => {
+  const filled = Math.max(1, Math.round(fraction * columns))
+  return Array.from({ length: filled }, (_, x) => '#' + barColor(filled <= 1 ? 1 : x / (filled - 1), h).toString(16).padStart(6, '0'))
+}
 
 const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
@@ -158,7 +169,6 @@ export const toBase64 = (bytes: Uint8Array) => {
   return out
 }
 
-const YELLOW = 0xffc2e0
 const EMPTY = 0x3b2530
 
 // ' ▁▂▃▄▅▆▇█' by eighths.
@@ -170,10 +180,10 @@ export const FIRE_ROWS = 3
 const wobble = (x: number, t: number) =>
   0.5 + 0.25 * Math.sin(t * 9.1 + x * 1.7) + 0.25 * Math.sin(t * 5.3 - x * 2.9 + Math.sin(t * 2 + x))
 
-/** The flame's color at a height 0..1 inside it: white-hot base, yellow, orange, red tips. */
-const flameAt = (y: number, h: number) => {
-  const tip = mix(ORANGE, RED, Math.min(1, 0.3 + h))
-  return y < 0.25 ? mix(WHITE, YELLOW, y * 4) : y < 0.6 ? mix(YELLOW, ORANGE, (y - 0.25) / 0.35) : mix(ORANGE, tip, (y - 0.6) / 0.4)
+/** The flame's color at a height 0..1 inside it: white-hot base, the bar's color under it, lavender tips. */
+const flameAt = (y: number, along: number, h: number) => {
+  const body = barColor(along, h)
+  return y < 0.25 ? mix(WHITE, body, y * 4) : mix(body, barColor(1, h), (y - 0.25) / 0.75)
 }
 
 /**
@@ -193,12 +203,11 @@ export const fireCells = (columns: number, fraction: number, h: number, t: numbe
   }
   for (let x = 0; x < columns; x++) {
     for (let y = 0; y < flameRows; y++) put(x, y, 0x20, DEFAULT)
+    const along = filled <= 1 ? 1 : x / (filled - 1)
     // The bar.
     if (x < filled) {
-      const along = filled <= 1 ? 1 : x / (filled - 1)
       const edge = x === filled - 1
-      const fg = edge && Math.floor(t * 14) % 2 === 0 ? WHITE : mix(GOLD, flame(Math.max(h, along * h)), along)
-      put(x, rows - 1, 0x2588, fg)
+      put(x, rows - 1, 0x2588, edge && Math.floor(t * 14) % 2 === 0 ? WHITE : barColor(along, h))
     } else {
       put(x, rows - 1, 0x2591, EMPTY) // ░
       continue
@@ -209,10 +218,10 @@ export const fireCells = (columns: number, fraction: number, h: number, t: numbe
     for (let y = 0; y < flameRows; y++) {
       const fromBottom = flameRows - 1 - y
       const eighths = Math.max(0, Math.min(8, Math.round(height - fromBottom * 8)))
-      if (eighths > 0) put(x, y, EIGHTHS[eighths]!, flameAt(fromBottom / flameRows + eighths / (8 * flameRows), h))
+      if (eighths > 0) put(x, y, EIGHTHS[eighths]!, flameAt(fromBottom / flameRows + eighths / (8 * flameRows), along, h))
     }
     // A spark off the top, now and then.
-    if (height < 9 && wobble(x * 3.1, t * 1.7) > 0.86) put(x, 0, Math.floor(t * 10 + x) % 2 ? 0xb7 : 0x2a, mix(YELLOW, ORANGE, h))
+    if (height < 9 && wobble(x * 3.1, t * 1.7) > 0.86) put(x, 0, Math.floor(t * 10 + x) % 2 ? 0xb7 : 0x2a, barColor(along, h))
   }
   return toBase64(new Uint8Array(words.buffer))
 }
