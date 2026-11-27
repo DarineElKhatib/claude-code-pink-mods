@@ -4,16 +4,24 @@ export const THRESHOLDS = [1, 5, 10, 25, 50] as const
 
 type Thing = { one: string; many: string; usd: number }
 
+const LBP_PER_USD = 89_500
+
 export const THINGS: readonly Thing[] = [
-  { one: 'burrito', many: 'burritos', usd: 11 },
-  { one: 'McDouble', many: 'McDoubles', usd: 3.19 },
+  // Beirut street prices in dollars, rough: adjust when the bakery does.
+  { one: "man'oushe", many: 'manakish', usd: 1.5 },
+  { one: 'shawarma', many: 'shawarmas', usd: 4.5 },
+  // Malak al Tawouk bestsellers, LBP off order.malakaltawouk.com on 2026-11-27.
+  { one: 'Tawouk Sandwich', many: 'Tawouk Sandwiches', usd: 650_000 / LBP_PER_USD },
+  { one: 'Crispy Again', many: 'Crispy Agains', usd: 600_000 / LBP_PER_USD },
+  { one: 'Tawouk 3ajebne', many: 'Tawouk 3ajebnes', usd: 500_000 / LBP_PER_USD },
+  { one: 'Twister Fries', many: 'Twister Fries', usd: 400_000 / LBP_PER_USD },
 ]
 
 /** Dollars with two decimals (12.34), or four under a cent so the first fractions still move. */
 export const money = (usd: number) =>
   '$' + (usd > 0 && usd < 0.01 ? usd.toFixed(4) : usd.toFixed(2))
 
-/** `= 1.4 burritos` for the thing at `index`, wrapping. */
+/** `= 1.4 manakish` for the thing at `index`, wrapping. */
 export const compare = (usd: number, index: number) => {
   const thing = THINGS[((index % THINGS.length) + THINGS.length) % THINGS.length]!
   const count = usd / thing.usd

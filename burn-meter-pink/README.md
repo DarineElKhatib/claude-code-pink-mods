@@ -5,7 +5,7 @@
 Live session cost odometer above the prompt: a burning fuse, real-world comparisons, threshold alerts.
 
 
-A band above the prompt with a growing fire bar for session spend, 5-hour and weekly plan-limit bars with reset times, and the cost converted into burritos and McDoubles. `/burn` opens the full panel with per-turn cost. Alerts fire when you cross a threshold.
+A band above the prompt with a growing fire bar for session spend, 5-hour and weekly plan-limit bars with reset times, and the cost converted into manakish, shawarmas and Malak al Tawouk bestsellers. `/burn` opens the full panel with per-turn cost. Alerts fire when you cross a threshold.
 
 ## What the hooks do
 
