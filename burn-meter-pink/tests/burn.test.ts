@@ -10,11 +10,12 @@ describe('burn math', () => {
   })
 
   test('comparisons pick a thing and pluralize', async () => {
-    expect(compare(22, 0)).toBe('= 2.0 burritos')
-    expect(compare(11, 0)).toBe('= 1.0 burrito')
-    expect(compare(3.19, 1)).toBe('= 1.0 McDouble')
-    expect(compare(31.9, 1)).toBe('= 10 McDoubles')
-    expect(compare(11, 2)).toBe('= 1.0 burrito')
+    expect(compare(3, 0)).toBe('= 2.0 manakish')
+    expect(compare(1.5, 0)).toBe("= 1.0 man'oushe")
+    expect(compare(4.5, 1)).toBe('= 1.0 shawarma')
+    expect(compare(45, 1)).toBe('= 10 shawarmas')
+    expect(compare(14.53, 2)).toBe('= 2.0 Tawouk Sandwiches')
+    expect(compare(1.5, 6)).toBe("= 1.0 man'oushe")
   })
 
   test('thresholds fire once each, in order', async () => {
